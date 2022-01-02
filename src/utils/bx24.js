@@ -21,10 +21,7 @@ export default new (class BX24API {
     await this.auth()
     params.auth = this.session.ACCESS_TOKEN
 
-    console.log({ params })
-
     const queryString = getQueryString(params)
-    console.log({ queryString })
 
     const result = await fetch(this.baseUrl + `/rest/${name}?`, {
       method: 'POST',

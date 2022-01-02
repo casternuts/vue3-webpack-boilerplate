@@ -49,11 +49,10 @@ export default {
         }
       }
 
-      console.log(params)
-
       const result = await BX24API.callMethod('tasks.task.add', params)
 
-      console.log({ result })
+      newTask.title = ''
+      newTask.description = ''
 
     }
 
