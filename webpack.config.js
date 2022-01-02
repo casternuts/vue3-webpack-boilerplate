@@ -21,8 +21,8 @@ module.exports = {
     hot: true,
     onAfterSetupMiddleware: function (devServer) {
       devServer.app.post('*', (req, res) => {
-        res.redirect(req.originalUrl);
-      });
+        res.redirect(req.originalUrl)
+      })
     }
 
   },
