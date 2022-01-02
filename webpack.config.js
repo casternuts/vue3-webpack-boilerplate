@@ -7,6 +7,7 @@ module.exports = {
   entry: './src/main.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js'
   },
   module: {
     rules: [
@@ -18,9 +19,12 @@ module.exports = {
   },
   devServer: {
     hot: true,
-    // proxy: {
-    //   '*': 'http://localhost:3000'
-    // }
+    onAfterSetupMiddleware: function (devServer) {
+      devServer.app.post('*', (req, res) => {
+        res.redirect(req.originalUrl);
+      });
+    }
+
   },
   resolve: {
     alias: {
@@ -29,7 +33,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/index.html'
+      template: './public/index.html'
     }),
     new VueLoaderPlugin(),
     new webpack.HotModuleReplacementPlugin({})
