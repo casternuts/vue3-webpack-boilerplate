@@ -18,8 +18,6 @@ module.exports = {
   },
   devServer: {
     hot: true,
-    host: '127.0.0.1',
-    port: 8008,
     // proxy: {
     //   '*': 'http://localhost:3000'
     // }
