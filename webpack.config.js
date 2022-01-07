@@ -2,6 +2,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { VueLoaderPlugin } = require('vue-loader')
 const webpack = require('webpack')
 const path = require('path')
+const fs = require('fs')
 
 module.exports = {
   entry: './src/main.js',
@@ -18,11 +19,26 @@ module.exports = {
     ]
   },
   devServer: {
+    host: '127.0.0.1',
+    port: 8888,
+    https: {
+      key: fs.readFileSync('./public/cert/cert.key'),
+      cert: fs.readFileSync('./public/cert/cert.crt'),
+      ca: fs.readFileSync('./public/cert/ca.crt')
+    },
     hot: true,
-    onAfterSetupMiddleware: function (devServer) {
-      devServer.app.post('*', (req, res) => {
-        res.redirect(req.originalUrl)
-      })
+    // onAfterSetupMiddleware: function (devServer) {
+    //   devServer.app.post('*', (req, res) => {
+    //     res.redirect(req.originalUrl)
+    //   })
+    // },
+    proxy: {
+      '*': {
+        target: 'https://blsx.ru:7777/',
+        secure: true,
+        changeOrigin: true,
+        // method: 'POST'
+      }
     }
 
   },

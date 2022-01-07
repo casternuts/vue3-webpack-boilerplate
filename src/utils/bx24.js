@@ -4,11 +4,13 @@ import { getQueryString } from './utils'
 const bx24 = new BX24(window, parent)
 window.bx24 = bx24
 
-export default new (class BX24API {
+class BX24API {
   constructor() {
     this.auth()
     const urlParams = new URLSearchParams(window.location.search)
     this.baseUrl = `https://${urlParams.get('DOMAIN')}`
+    this.placement = urlParams.get('PLACEMENT')
+    this.urlParams = urlParams
   }
 
   async auth() {
@@ -22,6 +24,7 @@ export default new (class BX24API {
     params.auth = this.session.ACCESS_TOKEN
 
     const queryString = getQueryString(params)
+    console.log({ queryString })
 
     const result = await fetch(this.baseUrl + `/rest/${name}?`, {
       method: 'POST',
@@ -45,4 +48,7 @@ export default new (class BX24API {
     }
     return response
   }
-})()
+
+}
+
+export default new BX24API()

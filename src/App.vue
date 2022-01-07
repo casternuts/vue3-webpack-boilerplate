@@ -1,7 +1,22 @@
 <template>
-  <div>
+  <div v-if="isDefaultPlacement">
+
+    DEFAULT PLACEMENT
+
+    <br>
+    <hr>
+    <br>
+
+    <button @click.prevent="bindPlacement">Добавить скоуп</button>
+    <button @click.prevent="unBindPlacement">Удалить скоуп</button>
+
+  </div>
+
+
+  <div v-else>
     Hello, Vue3 Webpack!
 
+    <br>
     <hr>
     <br>
 
@@ -20,24 +35,52 @@
       >
       <button
           @click.prevent="sendTask"
-      >Добавить
+      >Добавить задачу
       </button>
     </div>
+
   </div>
 </template>
 
 <script>
 
-import { reactive } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
 import BX24API from './utils/bx24'
 
 export default {
   setup() {
 
+    const bindPlacement = async () => {
+      const list = await BX24API.callMethod('placement.bind', {
+        PLACEMENT: 'CRM_DEAL_DETAIL_TAB',
+        HANDLER: 'https://127.0.0.1:8888/',
+        TITLE: 'Производство'
+      })
+      console.log(list)
+    }
+
+    const unBindPlacement = async () => {
+      const list = await BX24API.callMethod('placement.unbind', {
+        PLACEMENT: 'CRM_DEAL_DETAIL_TAB',
+        HANDLER: 'https://127.0.0.1:8888/',
+      })
+      console.log(list)
+    }
+
+
     const newTask = reactive({
       title: '',
       description: ''
     })
+
+    const isDefaultPlacement = (BX24API.placement === 'DEFAULT')
+
+    const placement = BX24API.placement
+    console.log({ placement })
+
+    let ID = JSON.parse(BX24API.urlParams.get('PLACEMENT_OPTIONS'))['ID'] ?? null
+
+    console.log({ ID })
 
     const sendTask = async () => {
 
@@ -56,7 +99,7 @@ export default {
 
     }
 
-    return { newTask, sendTask }
+    return { newTask, sendTask, bindPlacement, unBindPlacement, isDefaultPlacement }
 
   }
 }
