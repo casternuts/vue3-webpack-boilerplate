@@ -9,6 +9,7 @@
 
     <button @click.prevent="bindPlacement">Добавить скоуп</button>
     <button @click.prevent="unBindPlacement">Удалить скоуп</button>
+    <button @click.prevent="getOptions">Опции встраивания</button>
 
   </div>
 
@@ -37,6 +38,12 @@
           @click.prevent="sendTask"
       >Добавить задачу
       </button>
+
+      <br>
+      <br>
+
+      <button @click.prevent="getOptions">Опции встраивания</button>
+
     </div>
 
   </div>
@@ -54,7 +61,7 @@ export default {
       const list = await BX24API.callMethod('placement.bind', {
         PLACEMENT: 'CRM_DEAL_DETAIL_TAB',
         HANDLER: 'https://127.0.0.1:8888/',
-        TITLE: 'Производство'
+        TITLE: 'Производство !!!'
       })
       console.log(list)
     }
@@ -99,7 +106,19 @@ export default {
 
     }
 
-    return { newTask, sendTask, bindPlacement, unBindPlacement, isDefaultPlacement }
+    async function getOptions() {
+
+      // BX24API.urlParams.forEach((item, key) => {
+      //   console.log({ item, key })
+      // })
+
+      const id = JSON.parse(BX24API.urlParams.get('PLACEMENT_OPTIONS')).ID
+
+      console.log(id)
+
+    }
+
+    return { newTask, sendTask, bindPlacement, unBindPlacement, isDefaultPlacement, getOptions }
 
   }
 }
