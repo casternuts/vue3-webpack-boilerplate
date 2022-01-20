@@ -1,5 +1,6 @@
 import { BX24 } from 'bx24'
 import { getQueryString } from './utils'
+import axios from 'axios'
 
 const bx24 = new BX24(window, parent)
 window.bx24 = bx24
@@ -23,15 +24,12 @@ class BX24API {
     await this.auth()
     params.auth = this.session.ACCESS_TOKEN
 
-    const queryString = getQueryString(params)
-    console.log({ queryString })
+    // const queryString = getQueryString(params)
+    // console.log({ queryString })
 
-    const result = await fetch(this.baseUrl + `/rest/${name}?`, {
-      method: 'POST',
-      body: queryString,
-    })
+    const { data } = await axios.post(this.baseUrl + `/rest/${name}?`, params)
 
-    return await result.json()
+    return data
   }
 
   async getAll(name, params = {}) {

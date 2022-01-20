@@ -9,13 +9,14 @@
 
     <button @click.prevent="bindPlacement">Добавить скоуп</button>
     <button @click.prevent="unBindPlacement">Удалить скоуп</button>
-    <button @click.prevent="getOptions">Опции встраивания</button>
 
   </div>
 
 
-  <div v-else>
-    Hello, Vue3 Webpack!
+  <div class="mt-3 mx-3" v-else>
+    ID сделки: {{ id }}
+    <br>
+    {{ title }}
 
     <br>
     <hr>
@@ -35,14 +36,34 @@
           placeholder="description"
       >
       <button
-          @click.prevent="sendTask"
+          @click.prevent="createTask(newTask)"
       >Добавить задачу
       </button>
 
       <br>
       <br>
 
-      <button @click.prevent="getOptions">Опции встраивания</button>
+      <button @click.prevent="getDealInfo">Инфо о сделке</button>
+
+      <br>
+      <br>
+
+      <button @click.prevent="taskList">taskList</button>
+
+      <br>
+      <br>
+
+      <button @click.prevent="getTaskFields">getTaskFields</button>
+
+      <br>
+      <br>
+
+      <button @click.prevent="updateTask">updateTask</button>
+
+      <br>
+      <br>
+
+      <button @click.prevent="getLists">getLists</button>
 
     </div>
 
@@ -51,28 +72,43 @@
 
 <script>
 
-import { onMounted, reactive, ref } from 'vue'
+import { onBeforeMount, onMounted, reactive, ref } from 'vue'
+
 import BX24API from './utils/bx24'
+
+import {
+  unBindPlacement,
+  bindPlacement,
+  createTask,
+  getTaskFields,
+  updateTask,
+  getDealInfo,
+  getCurrentUser,
+  getLists
+} from './utils/restB24/'
 
 export default {
   setup() {
 
-    const bindPlacement = async () => {
-      const list = await BX24API.callMethod('placement.bind', {
-        PLACEMENT: 'CRM_DEAL_DETAIL_TAB',
-        HANDLER: 'https://127.0.0.1:8888/',
-        TITLE: 'Производство !!!'
-      })
-      console.log(list)
-    }
+    let id = ref(null), title = ref('')
 
-    const unBindPlacement = async () => {
-      const list = await BX24API.callMethod('placement.unbind', {
-        PLACEMENT: 'CRM_DEAL_DETAIL_TAB',
-        HANDLER: 'https://127.0.0.1:8888/',
-      })
-      console.log(list)
-    }
+    onBeforeMount(async () => {
+
+      const user = await getCurrentUser()
+
+      id.value = JSON.parse(BX24API.urlParams.get('PLACEMENT_OPTIONS'))['ID'] ?? null
+
+      console.log({ DEAL_ID: id.value, user })
+
+
+      const { result } = await BX24API.callMethod('CRM.DEAL.GET', { id: parseInt(id.value) })
+
+      const orderNumber = result['UF_CRM_1633523035']
+      const dealName = result['TITLE']
+
+      title.value = `${orderNumber} | ${dealName}`
+
+    })
 
 
     const newTask = reactive({
@@ -82,43 +118,33 @@ export default {
 
     const isDefaultPlacement = (BX24API.placement === 'DEFAULT')
 
-    const placement = BX24API.placement
-    console.log({ placement })
+    async function taskList() {
 
-    let ID = JSON.parse(BX24API.urlParams.get('PLACEMENT_OPTIONS'))['ID'] ?? null
+      const list = await BX24API.callMethod('tasks.task.list', {
+        filter: {
+          UF_CRM_TASK: `D_${id.value}`
+        },
+        select: ['UF_CRM_TASK']
+      })
 
-    console.log({ ID })
-
-    const sendTask = async () => {
-
-      const params = {
-        fields: {
-          TITLE: newTask.title,
-          DESCRIPTION: newTask.description,
-          RESPONSIBLE_ID: 1,
-        }
-      }
-
-      const result = await BX24API.callMethod('tasks.task.add', params)
-
-      newTask.title = ''
-      newTask.description = ''
+      console.log(list)
 
     }
 
-    async function getOptions() {
-
-      // BX24API.urlParams.forEach((item, key) => {
-      //   console.log({ item, key })
-      // })
-
-      const id = JSON.parse(BX24API.urlParams.get('PLACEMENT_OPTIONS')).ID
-
-      console.log(id)
-
+    return {
+      newTask,
+      createTask,
+      bindPlacement,
+      unBindPlacement,
+      getTaskFields,
+      updateTask,
+      getDealInfo,
+      getLists,
+      isDefaultPlacement,
+      id,
+      taskList,
+      title
     }
-
-    return { newTask, sendTask, bindPlacement, unBindPlacement, isDefaultPlacement, getOptions }
 
   }
 }
