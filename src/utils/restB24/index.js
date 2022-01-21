@@ -1,7 +1,7 @@
-import { getTaskFields, updateTask, createTask } from './task'
+import { getTaskFields, updateTask, createTask, getTaskAnchoredToDeal } from './task'
 import { bindPlacement, unBindPlacement, getDealIdFromPlacement } from './placement'
 import { getLists } from './list'
-import { getCurrentUser } from './user'
+import { getCurrentUser, getCrmUsersList } from './user'
 import { getDealInfo } from './deal'
 
 
@@ -13,10 +13,12 @@ export {
   getTaskFields,
   updateTask,
   createTask,
+  getTaskAnchoredToDeal,
 
   getLists,
 
   getCurrentUser,
+  getCrmUsersList,
 
   getDealInfo
 

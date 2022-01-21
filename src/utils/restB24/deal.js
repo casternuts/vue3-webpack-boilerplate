@@ -4,7 +4,7 @@ import BX24API from '../bx24'
 
 // Выгрузить одну сделку
 
-const getDealInfo = async () => {
+const getDealInfo = async (dealId) => {
   const response = await BX24API.callMethod('crm.deal.get', { id: parseInt(dealId) })
 
   console.log({ response })

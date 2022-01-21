@@ -3,8 +3,12 @@ import BX24API from '../bx24'
 // ПОЛЬЗОВАТЕЛИ СИСТЕМЫ
 
 const getCurrentUser = async () => {
-  const response = await BX24API.callMethod('user.current', {})
-  return response.data
+  return await BX24API.callMethod('user.current', {})
 }
 
-export { getCurrentUser }
+const getCrmUsersList = async () => {
+  const userList = await BX24API.getAll('user.get', {})
+  return userList.result
+}
+
+export { getCurrentUser, getCrmUsersList }

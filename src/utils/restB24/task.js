@@ -64,8 +64,24 @@ const getTaskFields = async () => {
   return console.log(await BX24API.callMethod('tasks.task.getFields'))
 }
 
+// Получить список задач привязанных к сделке
+
+async function getTaskAnchoredToDeal(dealId) {
+
+  const list = await BX24API.callMethod('tasks.task.list', {
+    filter: {
+      UF_CRM_TASK: `D_${dealId}`
+    },
+    select: ['UF_CRM_TASK']
+  })
+
+  console.log(list)
+
+}
+
 export {
   createTask,
   updateTask,
-  getTaskFields
+  getTaskFields,
+  getTaskAnchoredToDeal
 }
