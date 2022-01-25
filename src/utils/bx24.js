@@ -1,6 +1,8 @@
 import { BX24 } from 'bx24'
 import { getQueryString } from './utils'
 import axios from 'axios'
+import { v4 as uuidv4 } from 'uuid'
+import { stringify } from 'qs'
 
 const bx24 = new BX24(window, parent)
 window.bx24 = bx24
@@ -24,12 +26,31 @@ class BX24API {
     await this.auth()
     params.auth = this.session.ACCESS_TOKEN
 
-    // const queryString = getQueryString(params)
-    // console.log({ queryString })
-
     const { data } = await axios.post(this.baseUrl + `/rest/${name}?`, params)
 
     return data
+  }
+
+  async callBatchMethodByHook(params = {}) {
+
+    params.cmd = params.cmd.map(item => `${item[0]}?${stringify(item[1])}`)
+    const data = JSON.stringify(params)
+    const url = `https://007.bitrix24.ru/rest/291/i67rclyrshqli252/batch?`
+
+    let config = {
+      method: 'post',
+      url,
+      data,
+      headers: {
+        'Content-Type': 'application/json',
+        'Cookie': 'BITRIX_SM_SALE_UID=0; qmb=.'
+      }
+    }
+
+    const response = await axios(config)
+
+    console.log(response.data)
+
   }
 
   async getAll(name, params = {}) {
@@ -49,4 +70,6 @@ class BX24API {
 
 }
 
-export default new BX24API()
+export default new
+
+BX24API()
